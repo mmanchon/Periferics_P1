@@ -11,10 +11,19 @@
 /* Include core modules */
 #include "stm32f4xx.h"
 #include "stm32f4xx_rcc.h"
+#include "stm32f4xx_tim.h"
 #include "stm32f4xx_gpio.h"
+#include "tm_stm32f4_rng.h"
 
 /* Include my libraries here */
 
+/*
+ * Function for scale a number to the desired range.
+ */
+long map(long x, long in_min, long in_max, long out_min, long out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 void delay(int counter)
 {
@@ -64,26 +73,48 @@ void initButton(GPIO_InitTypeDef gpio){
 }
 
 
+void InitializeTimer()
+{
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+
+    TIM_TimeBaseInitTypeDef timerInitStructure;
+    timerInitStructure.TIM_Prescaler = 40000;
+    timerInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
+    timerInitStructure.TIM_Period = 500;
+    timerInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+    timerInitStructure.TIM_RepetitionCounter = 0;
+    TIM_TimeBaseInit(TIM2, &timerInitStructure);
+    TIM_Cmd(TIM2, ENABLE);
+}
+
 int main(void)
 {
 	//estructura con todas la I/O de la placa (diria que mas...)
 	GPIO_InitTypeDef gpio;//variable para usar la estructura
+
 	initLed3(gpio);
 	initButton(gpio);
 	int i = 0;
 	//GPIO_SetBits(GPIOG, GPIO_Pin_13);
 	GPIO_ResetBits(GPIOG, GPIO_Pin_13); // LED OFF
 
+	int rand_tled = 0;
+	TM_RNG_Init();
+	//rand_tled = TM_RNG_Get();
+	int max_input_value = 0x7FFFFFFF;
+	rand_tled = map(TM_RNG_Get(),0,max_input_value,400,800);
 	while (1)
 	{
 		if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)) {
 			while(i<3){
+				rand_tled = map(TM_RNG_Get(),0,max_input_value,400,800);
 				GPIO_SetBits(GPIOG, GPIO_Pin_13); // LED ON
-				delay(400);
+				delay(rand_tled);
 				GPIO_ResetBits(GPIOG, GPIO_Pin_13); // LED OFF
-				delay(400);
+				delay(rand_tled);
 				i++;
 			}
+			i=0;
 		}
 	}
 }

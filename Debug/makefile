@@ -28,13 +28,13 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: Practica1.elf
+all: Periferics_P1.elf
 
 # Tool invocations
-Practica1.elf: $(OBJS) $(USER_OBJS) C:\Users\ManelManchon\workspace\Practica1\LinkerScript.ld
+Periferics_P1.elf: $(OBJS) $(USER_OBJS) C:\Users\samuel\workspace\Periferics_P1\LinkerScript.ld
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU GCC Linker'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -T"C:\Users\ManelManchon\workspace\Practica1\LinkerScript.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "Practica1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -lm
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -T"C:\Users\samuel\workspace\Periferics_P1\LinkerScript.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "Periferics_P1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -lm
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
@@ -46,8 +46,8 @@ clean:
 
 post-build:
 	-@echo 'Generating binary and Printing size information:'
-	arm-none-eabi-objcopy -O binary "Practica1.elf" "Practica1.bin"
-	arm-none-eabi-size "Practica1.elf"
+	arm-none-eabi-objcopy -O binary "Periferics_P1.elf" "Periferics_P1.bin"
+	arm-none-eabi-size "Periferics_P1.elf"
 	-@echo ' '
 
 .PHONY: all clean dependents
