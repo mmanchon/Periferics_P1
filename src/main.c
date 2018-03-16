@@ -13,16 +13,20 @@
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_tim.h"
 #include "stm32f4xx_gpio.h"
-#include "tm_stm32f4_rng.h"
+
+
 
 #define MAX_PERIODE 28800
-/* Include my libraries here */
 
+/* Include my libraries here */
+#include "tm_stm32f4_rng.h"
 
 
 /* Variables globales */
 int timer_value;
 int tm4_periode;
+
+
 /*
  * Function for scale a number to the desired range.
  */
@@ -31,11 +35,13 @@ int map(int rand, int min, int max)
   return (rand % (max + 1 - min)) + min;
 }
 
+
 void delay(int counter)
 {
 	int i;
 	for (i = 0; i < counter * 10000; i++) {}
 }
+
 
 void TIM_ResetCounter(TIM_TypeDef* TIMx)
 {
@@ -45,6 +51,9 @@ void TIM_ResetCounter(TIM_TypeDef* TIMx)
   /* Reset the Counter Register value */
   TIMx->CNT = 0;
 }
+
+
+
 void TM_LEDS_PWM_Init(void) {
     GPIO_InitTypeDef GPIO_InitStruct;
 
@@ -64,7 +73,7 @@ void TM_LEDS_PWM_Init(void) {
 }
 
 
-void initLed3(GPIO_InitTypeDef gpio){
+void INIT_OutputPins(GPIO_InitTypeDef gpio){
 		//RCC -> Reset and Clock Control
 		// All GPIO's are on AHB1 bus.
 		//GPIOG port porque los LEDs estan conectados a los pins PG13 y PG14 (supongo que estructura interna)
@@ -88,7 +97,7 @@ void initLed3(GPIO_InitTypeDef gpio){
 }
 
 
-void initButton(GPIO_InitTypeDef gpio){
+void INIT_Button(GPIO_InitTypeDef gpio){
 	//User button connected to PAO
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
     //El pin 0
@@ -106,8 +115,9 @@ void initButton(GPIO_InitTypeDef gpio){
 
 }
 
+
 /* Configure pins to be interrupts */
-void Configure_PD0(void) {
+void EXTI_Pwm(void) {
 	/* Set variables used */
 	GPIO_InitTypeDef GPIO_InitStruct;
 	EXTI_InitTypeDef EXTI_InitStruct;
@@ -153,6 +163,7 @@ void Configure_PD0(void) {
 	NVIC_Init(&NVIC_InitStruct);
 }
 
+
 /* Set interrupt handlers */
 /* Handle PD0 interrupt */
 void EXTI0_IRQHandler(void) {
@@ -192,10 +203,7 @@ void TIM2_INT_Init()
     TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
     TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;
 
-
-
     timer_value = 0;
-
 
     // TIM2 initialize
     TIM_TimeBaseInit(TIM2, &TIM_TimeBaseInitStruct);
@@ -267,42 +275,6 @@ void TIM4_INT_Init(int periode)
     GPIO_ResetBits(GPIOG, GPIO_Pin_14);
 }
 
-void TIM4_IRQHandler()
-{
-    // Checks whether the TIM2 interrupt has occurred or not
-    if (TIM_GetITStatus(TIM4, TIM_IT_Update)!=RESET)
-    {
-    	TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
-
-    	//GPIO_SetBits(GPIOG, GPIO_Pin_2);
-
-
-
-    	//timer_value++;
-    }
-
-
-}
-
-void TM_TIMER_PWM_Init(int period) {
-	TIM_TimeBaseInitTypeDef TIM_BaseStruct;
-
-	/* Enable clock for TIM4 */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-
-	TIM_BaseStruct.TIM_Prescaler = 9;
-	/* Count up */
-    TIM_BaseStruct.TIM_CounterMode = TIM_CounterMode_Up;
-    TIM_BaseStruct.TIM_Period = 8399; /* 10kHz PWM */
-    TIM_BaseStruct.TIM_ClockDivision = TIM_CKD_DIV1;
-    TIM_BaseStruct.TIM_RepetitionCounter = 0;
-	/* Initialize TIM4 */
-    TIM_TimeBaseInit(TIM4, &TIM_BaseStruct);
-	/* Start count on TIM4 */
-    TIM_Cmd(TIM4, ENABLE);
-}
-
-
 
 int main(void)
 {
@@ -317,8 +289,8 @@ int main(void)
 
 
 
-	initLed3(gpio);
-	initButton(gpio);
+	INIT_OutputPins(gpio);
+	INIT_Button(gpio);
 
 	//Inicializamos el Random
 	TM_RNG_Init();
@@ -352,7 +324,7 @@ int main(void)
 	TM_LEDS_PWM_Init();
 
 	//Configuramos la interrupcion externa
-	Configure_PD0();
+	EXTI_Pwm();
 	//Inicializamos la interrupcion para el PWM
 	TIM4_INT_Init(tm4_periode);
 	TM_PWM_Init(dutyCycle);

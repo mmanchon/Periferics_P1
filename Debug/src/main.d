@@ -36,8 +36,7 @@ src/main.o: ../src/main.c \
  C:/Users/samuel/workspace/Periferics_P1/StdPeriph_Driver/inc/stm32f4xx_sai.h \
  C:/Users/samuel/workspace/Periferics_P1/StdPeriph_Driver/inc/stm32f4xx_rcc.h \
  C:/Users/samuel/workspace/Periferics_P1/StdPeriph_Driver/inc/stm32f4xx_tim.h \
- C:/Users/samuel/workspace/Periferics_P1/StdPeriph_Driver/inc/stm32f4xx_gpio.h \
- ../src/tm_stm32f4_rng.h ../src/defines.h
+ C:/Users/samuel/workspace/Periferics_P1/StdPeriph_Driver/inc/stm32f4xx_gpio.h
 
 C:/Users/samuel/workspace/Periferics_P1/CMSIS/device/stm32f4xx.h:
 
@@ -114,7 +113,3 @@ C:/Users/samuel/workspace/Periferics_P1/StdPeriph_Driver/inc/stm32f4xx_rcc.h:
 C:/Users/samuel/workspace/Periferics_P1/StdPeriph_Driver/inc/stm32f4xx_tim.h:
 
 C:/Users/samuel/workspace/Periferics_P1/StdPeriph_Driver/inc/stm32f4xx_gpio.h:
-
-../src/tm_stm32f4_rng.h:
-
-../src/defines.h:
