@@ -15,11 +15,8 @@
 #include "stm32f4xx_gpio.h"
 
 
-
 #define MAX_PERIODE 28800
 
-/* Include my libraries here */
-#include "tm_stm32f4_rng.h"
 
 
 /* Variables globales */
@@ -40,6 +37,23 @@ void delay(int counter)
 {
 	int i;
 	for (i = 0; i < counter * 10000; i++) {}
+}
+
+void TM_RNG_Init(void) {
+	/* Enable RNG clock source */
+	RCC->AHB2ENR |= RCC_AHB2ENR_RNGEN;
+
+	/* RNG Peripheral enable */
+	RNG->CR |= RNG_CR_RNGEN;
+}
+
+
+uint32_t TM_RNG_Get(void) {
+	/* Wait until one RNG number is ready */
+	while (!(RNG->SR & (RNG_SR_DRDY)));
+
+	/* Get a 32-bit Random number */
+	return RNG->DR;
 }
 
 

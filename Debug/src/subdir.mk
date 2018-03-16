@@ -6,20 +6,17 @@
 C_SRCS += \
 ../src/main.c \
 ../src/syscalls.c \
-../src/system_stm32f4xx.c \
-../src/tm_stm32f4_rng.c 
+../src/system_stm32f4xx.c 
 
 OBJS += \
 ./src/main.o \
 ./src/syscalls.o \
-./src/system_stm32f4xx.o \
-./src/tm_stm32f4_rng.o 
+./src/system_stm32f4xx.o 
 
 C_DEPS += \
 ./src/main.d \
 ./src/syscalls.d \
-./src/system_stm32f4xx.d \
-./src/tm_stm32f4_rng.d 
+./src/system_stm32f4xx.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
