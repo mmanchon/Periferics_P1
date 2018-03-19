@@ -290,6 +290,24 @@ void TIM4_INT_Init(int periode)
 }
 
 
+
+void TIM4_IRQHandler()
+{
+    // Checks whether the TIM2 interrupt has occurred or not
+    if (TIM_GetITStatus(TIM4, TIM_IT_Update)!=RESET)
+    {
+    	TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
+
+    	//GPIO_SetBits(GPIOG, GPIO_Pin_2);
+
+
+
+    	//timer_value++;
+    }
+
+
+}
+
 int main(void)
 {
 	//estructura con todas la I/O de la placa (diria que mas...)
