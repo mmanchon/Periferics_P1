@@ -15,7 +15,7 @@
 #include "stm32f4xx_gpio.h"
 
 
-#define MAX_PERIODE 28800
+#define MAX_PERIODE 10000
 
 
 
@@ -183,14 +183,19 @@ void EXTI_Pwm(void) {
 void EXTI0_IRQHandler(void) {
 	/* Make sure that interrupt flag is set */
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
+
 		EXTI_ClearITPendingBit(EXTI_Line0);
 		GPIO_SetBits(GPIOG, GPIO_Pin_5);
-		if(tm4_periode > MAX_PERIODE) {
+		timer_value = timer_value * 10;
+		if( timer_value > MAX_PERIODE) {
 			GPIO_SetBits(GPIOG, GPIO_Pin_14);
 			GPIO_ResetBits(GPIOG, GPIO_Pin_13);
+
 		}else{
 			GPIO_SetBits(GPIOG, GPIO_Pin_13);
 		}
+
+	    timer_value = 0;
 
 	}
 }
@@ -283,7 +288,6 @@ void TIM4_INT_Init(int periode)
 
     timer_value = 0;
     //TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-
 
     NVIC_Init(&NVIC_InitStruct);
     GPIO_ResetBits(GPIOG, GPIO_Pin_14);
